@@ -28,6 +28,8 @@ public class GetBookingIdsTest extends BaseTest {
 
     @Test()
     public void getBookingIdsWithFilterTest() {
+        createBooking();
+
         // add query parameter to spec
         spec.queryParam("firstname", "Marcin");
         spec.queryParam("lastname", "Zyrkowski");
