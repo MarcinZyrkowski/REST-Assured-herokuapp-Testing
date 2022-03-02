@@ -26,7 +26,7 @@ public class GetBookingIdsTest extends BaseTest {
         Assert.assertFalse(bookingIds.isEmpty(), "List of bookingIds is empty, but it shouldn't be");
     }
 
-    @Test
+    @Test()
     public void getBookingIdsWithFilterTest() {
         // add query parameter to spec
         spec.queryParam("firstname", "Marcin");
