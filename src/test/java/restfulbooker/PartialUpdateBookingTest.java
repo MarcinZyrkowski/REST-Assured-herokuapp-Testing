@@ -9,10 +9,10 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 
-public class UpdateBookingTest extends BaseTest {
+public class PartialUpdateBookingTest extends BaseTest {
 
     @Test
-    public void updateBookingTest() {
+    public void partialUpdateBookingTest() {
         // Create booking
         Response responseCreate = createBooking();
         responseCreate.print();
@@ -22,18 +22,15 @@ public class UpdateBookingTest extends BaseTest {
 
         // Create JSON body
         JSONObject body = new JSONObject();
-        body.put("firstname", "Jan");
-        body.put("lastname", "Kowalski");
-        body.put("totalprice", 125);
-        body.put("depositpaid", true);
+        body.put("firstname", "Tom");
 
         JSONObject bookingdates = new JSONObject();
-        bookingdates.put("checkin", "2020-03-25");
-        bookingdates.put("checkout", "2020-03-27");
-        body.put("bookingdates", bookingdates);
-        body.put("additionalneeds", "Baby crib");
+        bookingdates.put("checkin", "2020-04-25");
+        bookingdates.put("checkout", "2020-04-27");
 
-        // Update booking
+        body.put("bookingdates", bookingdates);
+
+        // PartialUpdate booking
         Response responseUpdate = RestAssured
                 .given(spec)
                 .auth()
@@ -41,7 +38,7 @@ public class UpdateBookingTest extends BaseTest {
                 .basic("admin", "password123")
                 .contentType(ContentType.JSON)
                 .body(body.toString())
-                .put("/booking/" + bookingid);
+                .patch("/booking/" + bookingid);
         responseUpdate.print();
 
         // Verifications
@@ -51,22 +48,22 @@ public class UpdateBookingTest extends BaseTest {
         // Verify All fields
         SoftAssert softAssert = new SoftAssert();
         String actualFirstName = responseUpdate.jsonPath().getString("firstname");
-        softAssert.assertEquals(actualFirstName, "Jan", "firstname in response is not expected");
+        softAssert.assertEquals(actualFirstName, "Tom", "firstname in response is not expected");
 
         String actualLastName = responseUpdate.jsonPath().getString("lastname");
-        softAssert.assertEquals(actualLastName, "Kowalski", "lastname in response is not expected");
+        softAssert.assertEquals(actualLastName, "Zyrkowski", "lastname in response is not expected");
 
         int price = responseUpdate.jsonPath().getInt("totalprice");
-        softAssert.assertEquals(price, 125, "totalprice in response is not expected");
+        softAssert.assertEquals(price, 150, "totalprice in response is not expected");
 
         boolean depositpaid = responseUpdate.jsonPath().getBoolean("depositpaid");
-        softAssert.assertTrue(depositpaid, "depositpaid should be true, but it's not");
+        softAssert.assertFalse(depositpaid, "depositpaid should be false, but it's not");
 
         String actualCheckin = responseUpdate.jsonPath().getString("bookingdates.checkin");
-        softAssert.assertEquals(actualCheckin, "2020-03-25", "checkin in response is not expected");
+        softAssert.assertEquals(actualCheckin, "2020-04-25", "checkin in response is not expected");
 
         String actualCheckout = responseUpdate.jsonPath().getString("bookingdates.checkout");
-        softAssert.assertEquals(actualCheckout, "2020-03-27", "checkout in response is not expected");
+        softAssert.assertEquals(actualCheckout, "2020-04-27", "checkout in response is not expected");
 
         String actualAdditionalneeds = responseUpdate.jsonPath().getString("additionalneeds");
         softAssert.assertEquals(actualAdditionalneeds, "Baby crib", "additionalneeds in response is not expected");
